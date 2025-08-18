@@ -51,7 +51,7 @@ jobs:
         run: python manage.py migrate --noinput
 
       - name: Run tests
-        run: python manage.py test categories products orders 
+        run: python manage.py test categories products orders --noinput
 
 
   deploy:
