@@ -1,26 +1,63 @@
-from unittest.mock import patch
 from django.urls import reverse
 from rest_framework.test import APITestCase
+from unittest.mock import patch
+from rest_framework import status
+from registration.models import Customer
+from django.contrib.auth import get_user_model
+from categories.models import Category
 
-class CategoryApiViewTests(APITestCase):
-    @patch("categories.views.Category.objects.get_or_create")
-    def test_post_category(self, mock_get_or_create):
-        # mock what get_or_create returns (tuple: (object, created_bool))
-        mock_get_or_create.return_value = (
-            type("Category", (), {"id": 1, "category_name": "Electronics"})(),
-            True,
-        )
+@patch('registration.utils.Auth0JWTAuthentication.decode_token')
+@patch('registration.utils.Auth0JWTAuthentication.authenticate')
+class CategoryCreationTests(APITestCase):
 
-        url = reverse("category")  # adjust to your route
-        payload = {
-            "category_name": "Phones",
-            "parent_category": "Electronics"
+    def setUp(self):
+        Customer.objects.get_or_create(open_id='test-user-id')
+        parent_category , create_parent_category = Category.objects.get_or_create(category_name='Bags')
+        child_category = Category.objects.get_or_create(category_name="leather2 bag",parent=parent_category)
+
+
+    def test_create_category_with_permission(self, mock_authenticate, mock_decode_token):
+
+        mock_authenticate.return_value = (Customer.objects.get(open_id='test-user-id'), 'fake-token')
+        mock_decode_token.return_value = {
+            'sub': 'test-user-id',
+            'scope': 'create:categories read:categories'
         }
-        response = self.client.post(url, payload, format="json")
+        
+        url = reverse('category_list')
+        headers = {'HTTP_AUTHORIZATION': 'Bearer fake-token'}
+        data = {'category_name':  'Leather Bags', 'parent_category': 'Bags'}
+        response = self.client.post(url, data, **headers, format='json')
 
-        # assertions
-        self.assertEqual(response.status_code, 201)
-        self.assertIn("Category created successfully", str(response.data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+    def test_create_category_without_permission(self, mock_authenticate, mock_decode_token):
+        mock_authenticate.return_value = (Customer.objects.get(open_id='test-user-id'), 'fake-token')
+        
+        mock_decode_token.return_value = {
+            'sub': 'test-user-id',
+            'scope': 'read:categories'
+        }
+        
+        url = reverse('category_list')
+        headers = {'HTTP_AUTHORIZATION': 'Bearer fake-token'}
+        data = {'category_name': 'Leather Bags', 'parent_category': 'bags'}
+        response = self.client.post(url, data, **headers, format='json')
 
-        # make sure get_or_create was called twice
-        self.assertEqual(mock_get_or_create.call_count, 2)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        
+    def test_update_category_with_permission(self, mock_authenticate, mock_decode_token):
+        mock_authenticate.return_value = (Customer.objects.get(open_id='test-user-id'), 'fake-token')
+        mock_decode_token.return_value = {
+            'sub': 'test-user-id',
+            'scope': 'update:categories read:categories'
+        }
+        existing_category = Category.objects.get(category_name='leather2 bag')
+        url = reverse('category_detail', args=[existing_category.id])
+        headers = { 'HTTP_AUTHORIZATION' : 'Bearer fake-token'}
+        data = {'category_name': 'Cotton Bags', 'parent_category': 'Bags'}
+        response = self.client.put(url, data,**headers)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        

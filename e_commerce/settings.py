@@ -74,7 +74,9 @@ INSTALLED_APPS = [
     'products',
     'orders',
     'phonenumber_field',
-    'rest_framework'
+    'rest_framework',
+    'drf_yasg'
+    
 ]
 
 REST_FRAMEWORK = {
@@ -103,6 +105,17 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS' : {
+        'Bearer' : {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH' : False,
+    'PERSIST_AUTH': True
+}
 ROOT_URLCONF = 'e_commerce.urls'
 
 TEMPLATES = [

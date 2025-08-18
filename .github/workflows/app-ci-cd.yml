@@ -1,0 +1,81 @@
+name: CI/CD of E_commerce_app
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        ports:
+          - 5432:5432
+
+    env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        AUTH0_WEB_CLIENT_ID: ${{ secrets.AUTH0_WEB_CLIENT_ID }}
+        AUTH0_WEB_CLIENT_SECRET: ${{ secrets.AUTH0_WEB_CLIENT_SECRET }}
+        AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+        AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
+        AUTH0_MGMT_API_TOKEN : ${{ secrets.AUTH0_MGMT_API_TOKEN }}
+        AUTH0_ADMIN_ROLE: ${{ secrets.AUTH0_ADMIN_ROLE }}
+        AUTH0_CUSTOMER_ROLE: ${{ secrets.AUTH0_CUSTOMER_ROLE }}
+        SMS_USERNAME : ${{ secrets.SMS_USERNAME }}
+        SMS_API_KEY : ${{ secrets.SMS_API_KEY }}
+        SMS_SHORT_CODE : ${{ secrets.SMS_SHORT_CODE }}
+        AUTH0_MGMT_CLIENT_ID: ${{ secrets.AUTH0_MGMT_CLIENT_ID }}
+        AUTH0_MGMT_CLIENT_SECRET: ${{ secrets.AUTH0_MGMT_CLIENT_SECRET }}
+        EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+        EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
+        EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+        EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+        EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+        EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
+        DJANGO_SETTINGS_MODULE: e_commerce.settings
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run migrations
+        run: python manage.py migrate --noinput
+
+      - name: Run tests
+        run: python manage.py test
+
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8 .
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Trigger Render deploy
+        run: |
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+          -H "Content-Type: application/json"

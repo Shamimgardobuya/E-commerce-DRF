@@ -13,7 +13,7 @@ import http.client
 from django.contrib.auth.models import User
 from registration.models import Customer
 from rest_framework import exceptions
-
+from rest_framework import status
 
 def assign_role(user_id, role_id):
     try:
@@ -81,7 +81,7 @@ class RequiresScope:
             print("all scopes"*30, scopes)
             if self.required_scope not in scopes:
                 return JsonResponse(
-                    {"message": "You are not allowed to view this resource"}, status=403
+                    {"message": "You are not allowed to view this resource"}, status = status.HTTP_403_FORBIDDEN
                 )
 
             return func(view_instance, request, *args, **kwargs)
