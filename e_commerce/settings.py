@@ -36,7 +36,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '9a60da24152f.ngrok-free.app']
+ALLOWED_HOSTS = ['.localhost', '127.0.0.1', 'https://e-commerce-drf-vc9g.onrender.com'
+                ]
 
 AUTH0_CLIENT_ID=os.getenv("AUTH0_CLIENT_ID")
 AUTH0_WEB_CLIENT_ID=os.getenv("AUTH0_WEB_CLIENT_ID")
