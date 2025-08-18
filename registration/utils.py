@@ -68,17 +68,13 @@ class RequiresScope:
     def __call__(self, func):
         @wraps(func)
         def wrapper(view_instance, request, *args, **kwargs):
-            print("Decorator reached") 
-
             try:
                 token = Auth0JWTAuthentication.get_token_from_header(request)
                 decoded = Auth0JWTAuthentication.decode_token(token)
-                print("Decoded token:",  decoded.get("scope", "").split())
             except Exception as e:
                 return JsonResponse({"message": f"Invalid token: {str(e)}"}, status=401)
 
             scopes = decoded.get("scope", "").split()
-            print("all scopes"*30, scopes)
             if self.required_scope not in scopes:
                 return JsonResponse(
                     {"message": "You are not allowed to view this resource"}, status = status.HTTP_403_FORBIDDEN

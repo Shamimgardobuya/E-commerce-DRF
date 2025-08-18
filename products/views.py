@@ -114,9 +114,7 @@ class ProductListApiView(APIView):
     def get(self,request):
         try:
             products = ProductSerializer(Product.objects.all(), many=True)
-            dt = {"message": "Products fetched successfully,", "data": products.data}
 
-            print('yeh'*8,dt.get("data"))
             return Response(
                 {"message": "Products fetched successfully", "data": products.data}, status=200
             )
