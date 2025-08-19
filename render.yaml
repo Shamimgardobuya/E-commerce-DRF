@@ -10,6 +10,9 @@ services:
       python manage.py collectstatic --no-input
       python manage.py migrate
     startCommand: gunicorn e_commerce.wsgi:application  --bind 0.0.0.0:$PORT
+    postDeployCommand: |
+      python manage.py seed_categories 
+      python manage.py seed_products
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: e_commerce.settings
