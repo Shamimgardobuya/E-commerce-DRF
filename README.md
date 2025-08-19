@@ -135,8 +135,7 @@ Send the request.
 
 Check the inbox of the email address you used for the customer's username. You should receive an email containing the order details.
   example response
-    https://res.cloudinary.com/dbmgkmhtf/raw/upload/v1755593952/New_Order_from_test_gmail.com_mj0gpe.eml
-
+    ![Alt Text](https://res.cloudinary.com/dbmgkmhtf/raw/upload/v1755593952/New_Order_from_test_gmail.com_mj0gpe.eml)
 
 📱 Receiving an SMS
 To test the SMS notification feature, follow these steps:
@@ -148,7 +147,7 @@ Make and then check out an order.
 An SMS should be sent to the customer with details about their order.
 
 Note: This is a sandbox account, so the SMS will be delivered to a simulator, not to an actual phone.
-   Exampe response https://res.cloudinary.com/dbmgkmhtf/image/upload/v1755600168/sms_ehxr00.png
+   Exampe response  ![Alt Text](https://res.cloudinary.com/dbmgkmhtf/image/upload/v1755600168/sms_ehxr00.png)
 
 
 
