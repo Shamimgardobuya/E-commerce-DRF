@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: E-commerce-DRF
+    env: python
+    plan: free
+    branch: develop
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      python manage.py collectstatic --no-input
+      python manage.py migrate
+    startCommand: gunicorn e_commerce.asgi:application -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: e_commerce.settings
+      - key: PYTHON_VERSION
+        value: 3.11

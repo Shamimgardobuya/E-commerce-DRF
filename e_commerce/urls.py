@@ -30,8 +30,7 @@ schema_view = get_schema_view(
             "This token is required to authenticate and interact with all protected routes in the API."
         ),
         terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="shamimobuya@gmail.com"),
-        license=openapi.License(name="BSD License"),
+        contact=openapi.Contact(email="shamimobuya@gmail.com")
     ),
     public=True,
     permission_classes=(AllowAny,),
