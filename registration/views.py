@@ -108,28 +108,4 @@ def request_token(request):
             {"error": "network_error", "details": str(e)},
             status=503,
         )
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def get_management_token(request):
-    try:
-        conn = http.client.HTTPSConnection(settings.AUTH0_DOMAIN)
-
-        payload = urllib.parse.urlencode({
-                'grant_type': 'client_credentials',
-                'client_id': settings.AUTH0_MGMT_CLIENT_ID,
-                'client_secret': settings.AUTH0_MGMT_CLIENT_SECRET,
-                'audience': f"https://{settings.AUTH0_DOMAIN}/api/v2/"
-            })
-
-        headers = { 'content-type': "application/x-www-form-urlencoded" }
-
-        conn.request("POST", "/oauth/token", payload, headers)
-
-        res = conn.getresponse()
-        data = res.read()
         
-        return Response({"message": "Token feteched successfuly", "access_token": data.decode("utf-8")})
-    except Exception as e:
-        return Response({"message": f"Error occurred ... {str(e)}"})
-    
-    

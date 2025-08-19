@@ -20,16 +20,18 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework.permissions import AllowAny
 
-
 schema_view = get_schema_view(
     openapi.Info(
-        title="E_commerce rest apis in django",
+        title="E_commerce REST APIs in Django",
         default_version="v1",
-        description="To get started, visit the registration endpoint to get your access token that will allow you to access protected routes",
+        description=(
+            "To begin using the API, first access the `/register` endpoint to create your account and be identified by Auth0. "
+            "After registration, use the `/login` endpoint to obtain your access token. "
+            "This token is required to authenticate and interact with all protected routes in the API."
+        ),
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="shamimobuya@gmail.com"),
         license=openapi.License(name="BSD License"),
-
     ),
     public=True,
     permission_classes=(AllowAny,),

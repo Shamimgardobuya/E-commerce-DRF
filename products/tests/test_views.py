@@ -12,6 +12,7 @@ class ProductApiTest(APITestCase):
     def setUp(self):
         self.customer = Customer.objects.get_or_create(open_id='test-user-id')
         self.category = Category.objects.create(category_name="Appliances")
+        self.child_category = Category.objects.create(category_name="House Appliances",parent=self.category)
         self.product = Product.objects.create(name="Fridge", price=200.00, category=self.category,weight=34,quantity=45, units="grams")
         
     def test_list_products(self, mock_authenticate, mock_decode_token):
@@ -33,7 +34,7 @@ class ProductApiTest(APITestCase):
             'scope': 'create:products read:products'
         }
         headers = { 'HTTP_AUTHORIZATION' : 'Bearer fake-token'}
-        data = {"name": "Microwave", "price": 100.00, "category": self.category.id, "quantity": 10, "weight": 5, "units": "grams"}
+        data = {"name": "Microwave", "price": 100.00, "category": {"Appliances": "House Appliances"}, "quantity": 10, "weight": 5, "units": "grams"}
         url = reverse("product-list")
         response = self.client.post(url, data, **headers, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
