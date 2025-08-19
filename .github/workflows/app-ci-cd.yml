@@ -6,6 +6,29 @@ on:
   pull_request:
     branches: [ "develop" ]
 
+env:
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  DJANGO_SETTINGS_MODULE: e_commerce.settings
+  AUTH0_WEB_CLIENT_ID: ${{ secrets.AUTH0_WEB_CLIENT_ID }}
+  AUTH0_WEB_CLIENT_SECRET: ${{ secrets.AUTH0_WEB_CLIENT_SECRET }}
+  AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+  AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
+  AUTH0_MGMT_API_TOKEN : ${{ secrets.AUTH0_MGMT_API_TOKEN }}
+  AUTH0_ADMIN_ROLE: ${{ secrets.AUTH0_ADMIN_ROLE }}
+  AUTH0_CUSTOMER_ROLE: ${{ secrets.AUTH0_CUSTOMER_ROLE }}
+  SMS_USERNAME : ${{ secrets.SMS_USERNAME }}
+  SMS_API_KEY : ${{ secrets.SMS_API_KEY }}
+  SMS_SHORT_CODE : ${{ secrets.SMS_SHORT_CODE }}
+  AUTH0_MGMT_CLIENT_ID: ${{ secrets.AUTH0_MGMT_CLIENT_ID }}
+  AUTH0_MGMT_CLIENT_SECRET: ${{ secrets.AUTH0_MGMT_CLIENT_SECRET }}
+  EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+  EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
+  EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+  EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+  EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+  EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
+
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -43,9 +66,6 @@ jobs:
       - name: Run tests
         env: 
           DATABASE_URL: postgres://test_user:test_password@localhost:5432/test_db
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DJANGO_SETTINGS_MODULE: e_commerce.settings
-
         run: |
           python manage.py test categories products orders
 
@@ -73,8 +93,6 @@ jobs:
       - name: Run database migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DJANGO_SETTINGS_MODULE: e_commerce.settings
         run: |
           python manage.py migrate
       
