@@ -26,6 +26,10 @@ def assign_role(user_id, role_id):
             role_id
         ]
         })
+        roles = requests.get(url=url,headers=headers)
+        if (roles):
+            role_ids = [role['id'] for role in roles.json()]
+            requests.delete(url=url, json={ "roles": role_ids }, headers=headers) #remove previous roles
         response = requests.post(url=url, data=payload, headers=headers)
         print(response.text)
     except Exception as e:
@@ -74,7 +78,7 @@ class RequiresScope:
             except Exception as e:
                 return JsonResponse({"message": f"Invalid token: {str(e)}"}, status=401)
 
-            scopes = decoded.get("scope", "").split()
+            scopes = decoded.get("permissions", "")
             if self.required_scope not in scopes:
                 return JsonResponse(
                     {"message": "You are not allowed to view this resource"}, status = status.HTTP_403_FORBIDDEN
@@ -83,6 +87,8 @@ class RequiresScope:
             return func(view_instance, request, *args, **kwargs)
 
         return wrapper
+    
+    
 
 class Auth0JWTAuthentication(BaseAuthentication):
 
