@@ -121,6 +121,38 @@ python manage.py test
 
 ---
 
+
+Receiving an Email
+To test the email notification feature, follow these steps:
+
+Create a new customer account.
+
+Set the customer's username to a valid email address and their role to Admin.
+
+Access the orders endpoint with the checkout parameter.
+
+Send the request.
+
+Check the inbox of the email address you used for the customer's username. You should receive an email containing the order details.
+  example response
+    https://res.cloudinary.com/dbmgkmhtf/raw/upload/v1755593952/New_Order_from_test_gmail.com_mj0gpe.eml
+
+
+📱 Receiving an SMS
+To test the SMS notification feature, follow these steps:
+
+Ensure the customer account you are using has a valid phone number.
+
+Make and then check out an order.
+
+An SMS should be sent to the customer with details about their order.
+
+Note: This is a sandbox account, so the SMS will be delivered to a simulator, not to an actual phone.
+   Exampe response https://res.cloudinary.com/dbmgkmhtf/image/upload/v1755600168/sms_ehxr00.png
+
+
+
+
 ## 🛠️ Tech Stack
 
 * **Backend:** Django, Django REST Framework
@@ -138,4 +170,3 @@ This project is licensed under the **MIT License** – see the [LICENSE](LICENSE
 
 ---
 
-Would you like me to also **add usage examples with cURL/Postman requests** for your main endpoints (like creating a product or placing an order)? That usually makes the README more practical for developers.
