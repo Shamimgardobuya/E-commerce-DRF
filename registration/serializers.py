@@ -10,62 +10,20 @@ class Auth0UserSerializer(serializers.Serializer):
     """
     Serializer for creating a new user in Auth0.
     """
-    connection = serializers.CharField(
-        
-        default="Username-Password-Authentication",
-        help_text="The name of the Auth0 connection (e.g., 'Username-Password-Authentication').",
+    connection = serializers.HiddenField(
+                default="Username-Password-Authentication"
         
     )
     email = serializers.EmailField(
         required=True,
-        help_text="The user's email address."
+        help_text="user's email address."
     )
     password = serializers.CharField(
         write_only=True,
         max_length=128,
-        help_text="The user's password. This field is write-only for security."
+        help_text="user's password"
     )
 
-    user_id = serializers.CharField(
-        required=False,
-        max_length=255,
-        help_text="A custom user ID. Auth0 will generate one if not provided."
-    )
-    given_name = serializers.CharField(
-        required=False,
-        max_length=100,
-        help_text="The user's first name."
-    )
-    family_name = serializers.CharField(
-        required=False,
-        max_length=100,
-        help_text="The user's last name."
-    )
-    name = serializers.CharField(
-        required=False,
-        max_length=200,
-        help_text="The user's full name."
-    )
-    picture = serializers.URLField(
-        required=False,
-        help_text="A URL to your user's profile picture."
-    )
-    blocked = serializers.BooleanField(
-        required=False,
-        help_text="Indicates if  user is blocked."
-    )
-    verify_email = serializers.BooleanField(
-        required=False,
-        help_text="Whether to send a verification email to the user."
-    )
-    user_metadata = serializers.JSONField(
-        required=False,
-        help_text="Metadata that can be read by the client application."
-    )
-    app_metadata = serializers.JSONField(
-        required=False,
-        help_text="Metadata that can only be read by the Management API."
-    )
 
     def validate(self, data):
         if 'email' not in data:
