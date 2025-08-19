@@ -2,9 +2,9 @@ name: CI/CD of E_commerce_app
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "staging" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "staging" ]
 
 env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}

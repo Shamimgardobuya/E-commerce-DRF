@@ -35,9 +35,7 @@ class SendMessage:
         try:
             formatted_message = f"Order from {self.message.get('customer')}   {self.format_orders_summary(self.message.get('orders'))}"
             response = sms.send(formatted_message, [self.recipient], self.sender)
-            print("SMS Response:", response)
             if not response or (isinstance(response, dict) and response.get('SMSMessageData', {}).get('Recipients', [{}])[0].get('status') != 'Success'):
                 SendEmail(self.message)
         except Exception as e:
-            print(f"SMS sending failed: {e}")
             SendEmail(self.message)

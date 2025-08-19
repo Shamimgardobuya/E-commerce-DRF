@@ -3,7 +3,7 @@ services:
     name: E-commerce-DRF
     env: python
     plan: free
-    branch: develop
+    branch: staging
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
