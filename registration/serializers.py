@@ -77,9 +77,12 @@ class Auth0UserSerializer(serializers.Serializer):
 class CustomerSerializer(serializers.ModelSerializer):
     phone_number = PhoneNumberField(region="KE")
     password = serializers.CharField(write_only=True)
-    role = serializers.CharField(write_only=True, required=False)
-    
-    
+    role = serializers.CharField(
+        write_only=True, required=False,
+        help_text="The role of the user can either be Admin or Customer. If left blank, default role will be customer."
+    )
+
+
     class Meta:
         model = Customer
         fields = ("username", "phone_number", "password", "role")

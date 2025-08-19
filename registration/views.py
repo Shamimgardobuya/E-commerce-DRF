@@ -78,7 +78,7 @@ def request_token(request):
             "client_secret": settings.AUTH0_WEB_CLIENT_SECRET
         }
 
-        role_to_assign = settings.AUTH0_ADMIN_ROLE if data_validated.get('role') == "admin" else settings.AUTH0_CUSTOMER_ROLE
+        role_to_assign = settings.AUTH0_ADMIN_ROLE if data_validated.get('role') == "Admin" else settings.AUTH0_CUSTOMER_ROLE
         response = requests.post(token_url, json=payload)
 
         resp_data = response.json()

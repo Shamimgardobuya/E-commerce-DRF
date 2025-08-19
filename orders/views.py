@@ -147,10 +147,10 @@ class OrderListApiView(APIView):
                     'sum_of_orders': sum_of_orders,
                 }
 
-                send_sms = SendMessage("+254115818672", context, settings.SMS_SHORT_CODE)
+                send_sms = SendMessage(find_user.phone_number, context, settings.SMS_SHORT_CODE)
                 send_sms.send()
-                # send = SendEmail(context=context)
-                # send.send_email()
+                send = SendEmail(context=context)
+                send.send_email()
                 
                 return Response({
                     "message": "Checked out orders  successfully",
