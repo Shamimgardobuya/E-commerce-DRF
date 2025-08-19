@@ -93,7 +93,7 @@ def request_token(request):
             if customer:
                 customer.phone_number = data_validated.get("phone_number")
                 customer.username = username
-                customer.role = data_validated.get('role')
+                customer.role = data_validated.get('role') if data_validated.get('role')  else "Customer"
                 customer.save()
             return Response({
                 "message": "Authenticated successfully.",
