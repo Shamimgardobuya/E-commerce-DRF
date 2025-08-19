@@ -27,7 +27,8 @@ schema_view = get_schema_view(
         description=(
             "To begin using the API, first access the `/register` endpoint to create your account and be identified by Auth0. "
             "After registration, use the `/login` endpoint to obtain your access token. "
-            "This token is required to authenticate and interact with all protected routes in the API."
+            "This token is required to authenticate and interact with all protected routes in the API.\n\n"
+            "When authorizing, ensure you enter your access token in the format: `Bearer <token_value>`."
         ),
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="shamimobuya@gmail.com")
