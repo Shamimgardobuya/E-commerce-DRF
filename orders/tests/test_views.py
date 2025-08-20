@@ -21,23 +21,23 @@ class OrderApiTest(APITestCase):
         mock_authenticate.return_value = (self.customer, 'fake-token')
         mock_decode_token.return_value = {
             'sub': self.customer.open_id,
-            'scope': scope
+            'permissions': scope
         }
         return {'HTTP_AUTHORIZATION': 'Bearer fake-token'}
 
     def test_list_orders(self, mock_authenticate, mock_decode_token):
-        headers = self.mock_auth(mock_authenticate, mock_decode_token, 'read:orders')
+        headers = self.mock_auth(mock_authenticate, mock_decode_token, ['read:orders'])
         response = self.client.get(self.url, **headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_order(self, mock_authenticate, mock_decode_token):
-        headers = self.mock_auth(mock_authenticate, mock_decode_token, 'create:orders read:orders')
+        headers = self.mock_auth(mock_authenticate, mock_decode_token, ['create:orders', 'read:orders'])
         data = {"products": [ { "product": self.product.id, "quantity": 2}]}
         response = self.client.post(self.url, data, **headers, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_retrieve_order(self, mock_authenticate, mock_decode_token):
         detail_url = reverse("order-detail", args=[self.order.id])
-        headers = self.mock_auth(mock_authenticate, mock_decode_token, 'read:orders')
+        headers = self.mock_auth(mock_authenticate, mock_decode_token,['read:orders'])
         response = self.client.get(detail_url, **headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
