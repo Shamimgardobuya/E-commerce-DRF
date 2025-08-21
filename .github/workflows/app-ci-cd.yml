@@ -20,6 +20,7 @@ env:
   SMS_SHORT_CODE : ${{ secrets.SMS_SHORT_CODE }}
   AUTH0_MGMT_CLIENT_ID: ${{ secrets.AUTH0_MGMT_CLIENT_ID }}
   AUTH0_MGMT_CLIENT_SECRET: ${{ secrets.AUTH0_MGMT_CLIENT_SECRET }}
+  REDIS_URL: ${{ secrets.REDIS_URL }}
   EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
   EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
   EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
