@@ -15,7 +15,7 @@ env:
   AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
   AUTH0_ADMIN_ROLE: ${{ secrets.AUTH0_ADMIN_ROLE }}
   AUTH0_CUSTOMER_ROLE: ${{ secrets.AUTH0_CUSTOMER_ROLE }}
-  REDIS_URL: ${{ REDIS_URL }}
+  REDIS_URL: ${{ secrets.REDIS_URL }}
   SMS_USERNAME : ${{ secrets.SMS_USERNAME }}
   SMS_API_KEY : ${{ secrets.SMS_API_KEY }}
   SMS_SHORT_CODE : ${{ secrets.SMS_SHORT_CODE }}
