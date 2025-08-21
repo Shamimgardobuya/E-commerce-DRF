@@ -14,11 +14,12 @@ from django.contrib.auth.models import User
 from registration.models import Customer
 from rest_framework import exceptions
 from rest_framework import status
-
+from e_commerce.auth0_token import get_management_token
 def assign_role(user_id, role_id):
     try:
+        token = get_management_token()
         url = f"https://{settings.AUTH0_DOMAIN}/api/v2/users/{user_id}/roles"
-        headers = { 'authorization': f"Bearer {settings.AUTH0_MGMT_API_TOKEN}" ,
+        headers = { 'authorization': f"Bearer {token}" ,
                 'Content-Type': "application/json"
                 }
         payload = json.dumps({
@@ -152,12 +153,12 @@ class Auth0JWTAuthentication(BaseAuthentication):
 
 def get_username_from_payload(user_id):
         conn = http.client.HTTPSConnection(settings.AUTH0_DOMAIN)
-
-        headers = {'authorization': f"Bearer {os.getenv('AUTH0_MGMT_API_TOKEN')}"}
+        token = get_management_token()
+        headers = {'authorization': f"Bearer {token}"}
         conn.request("GET", f"/api/v2/users/{user_id}", headers=headers)
         res = conn.getresponse()
         data = res.read()
         dt = json.loads(data.decode("utf-8"))
             
-        return dt.get("given_name") or dt.get("name")
+        return dt.get("email")
 
