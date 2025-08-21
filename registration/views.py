@@ -14,7 +14,8 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi 
 from django.conf import settings
 from rest_framework import status
-
+from e_commerce.auth0_token import get_management_token
+import jwt
 @swagger_auto_schema(
     request_body=Auth0UserSerializer,
     method='post',
@@ -28,6 +29,7 @@ def create_auth_user(request):
     serializer = Auth0UserSerializer(data= request.data)
     serializer.is_valid(raise_exception=True)
     data_validated = serializer.validated_data
+    token = get_management_token()
     
     payload = data_validated
 
@@ -36,7 +38,7 @@ def create_auth_user(request):
     header = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': f'Bearer {settings.AUTH0_MGMT_API_TOKEN}'
+        'Authorization': f'Bearer {token}'
         }
 
     try:
@@ -107,5 +109,11 @@ def request_token(request):
         return JsonResponse(
             {"error": "network_error", "details": str(e)},
             status=503,
+        )
+    
+    except jwt.exceptions.ExpiredSignatureError as e:
+        return JsonResponse(
+            {"error": "Signature has expired", "details": str(e)},
+            status=500,
         )
         

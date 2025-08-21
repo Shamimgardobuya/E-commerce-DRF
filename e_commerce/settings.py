@@ -45,7 +45,6 @@ AUTH0_CLIENT_SECRET=os.getenv("AUTH0_SECRET")
 AUTH0_DOMAIN=os.getenv("AUTH0_DOMAIN")
 AUTH0_WEB_CLIENT_SECRET=os.getenv("AUTH0_WEB_CLIENT_SECRET")
 AUTH0_CALLBACK_URL=os.getenv("AUTH0_CALLBACK_URL")
-AUTH0_MGMT_API_TOKEN=os.getenv("AUTH0_MGMT_API_TOKEN")
 AUTH0_ADMIN_ROLE=os.getenv("AUTH0_ADMIN_ROLE")
 AUTH0_CUSTOMER_ROLE=os.getenv("AUTH0_CUSTOMER_ROLE")
 API_URL=os.getenv("API_URL")
@@ -146,7 +145,14 @@ DATABASES = {
         default = os.getenv('DATABASE_URL'),
         conn_max_age = 600
     )
-   
+
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv("REDIS_URL"), 
+    }
 }
 
 
