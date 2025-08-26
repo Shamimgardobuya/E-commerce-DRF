@@ -56,28 +56,32 @@ class CategoryApiView(APIView):
     )
     @RequiresScope("read:categories")
     def get(self, request,pk=None,format=None):
-        average_price = request.query_params.get("average_price")
-        category_object = Category.objects.get(pk=pk)
+        try:
+            average_price = request.query_params.get("average_price")
+            category_object = Category.objects.get(pk=pk)
 
-        if average_price and category_object:
-            average_data = FindAverageProduct(category_object.id)
-            average_price = average_data.create_view()
-            if average_price:
+            if average_price and category_object:
+                average_data = FindAverageProduct(category_object.id)
+                average_price = average_data.create_view()
+                if average_price:
+                    return Response(
+                        {"message": f"Average price fetched successfully", "data": average_price}, status=200
+                    )
+                    
+            if category_object:
+                find_category = CategorySerializer(Category.objects.get(pk=category_object.id))
                 return Response(
-                    {"message": f"Average price fetched successfully", "data": average_price}, status=200
+                    {"message": f"Category fetched successfully, {find_category.data}"}, status=200
                 )
-                
-        if category_object:
-            find_category = CategorySerializer(Category.objects.get(pk=category_object.id))
+            
+            categories = CategorySerializer(Category.objects.all(), many=True)
             return Response(
-                {"message": f"Category fetched successfully, {find_category.data}"}, status=200
+                {"message": f"Categories fetched successfully, {categories.data}"}, 200
             )
-        
-        categories = CategorySerializer(Category.objects.all(), many=True)
-        return Response(
-            {"message": f"Categories fetched successfully, {categories.data}"}, 200
-        )
-    
+        except Exception as e:
+            return Response(
+                {"message": f"Error occurred {str(e)}"}
+            )
     
     @swagger_auto_schema(
             operation_description="Deletes a category",
