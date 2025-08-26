@@ -27,7 +27,7 @@ class ProductSerializer(serializers.ModelSerializer):
         parent_name, child_name = list(value.items())[0]
 
         try:
-            parent_category = Category.objects.get(category_name=parent_name, parent=None)
+            parent_category = Category.objects.get(category_name=parent_name)
         except Category.DoesNotExist:
             raise serializers.ValidationError(f"Parent category '{parent_name}' does not exist.")
 
