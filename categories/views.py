@@ -56,28 +56,27 @@ class CategoryApiView(APIView):
     )
     @RequiresScope("read:categories")
     def get(self, request,pk=None,format=None):
-        average_price = request.query_params.get("average_price")
-        category_object = Category.objects.get(pk=pk)
-
-        if average_price and category_object:
-            average_data = FindAverageProduct(category_object.id)
-            average_price = average_data.create_view()
-            if average_price:
+        try:
+            average_price = request.query_params.get("average_price")
+            category_object = Category.objects.get(pk=pk)            
+            if average_price and category_object:
+                average_data = FindAverageProduct(category_object.id)
+                average_price = average_data.create_view()
+                if average_price:
+                    return Response(
+                        {"message": f"Average price fetched successfully", "data": average_price}, status=200
+                    )
+            if category_object:
+                find_category = CategorySerializer(Category.objects.get(pk=category_object.id))
                 return Response(
-                    {"message": f"Average price fetched successfully", "data": average_price}, status=200
+                    {"message": f"Category fetched successfully","data": find_category.data}, status=status.HTTP_200_OK
                 )
-                
-        if category_object:
-            find_category = CategorySerializer(Category.objects.get(pk=category_object.id))
+            
+        except Category.DoesNotExist as e:
             return Response(
-                {"message": f"Category fetched successfully, {find_category.data}"}, status=200
-            )
+                    {"message": f"Category not found"}, status=status.HTTP_404_NOT_FOUND
+                )
         
-        categories = CategorySerializer(Category.objects.all(), many=True)
-        return Response(
-            {"message": f"Categories fetched successfully, {categories.data}"}, 200
-        )
-    
     
     @swagger_auto_schema(
             operation_description="Deletes a category",
@@ -87,13 +86,13 @@ class CategoryApiView(APIView):
     def delete(self, request, pk):
         try:
             category = Category.objects.get(pk=pk)
-            category.delete()
-            return Response({"message": f"Category deleted successfully"}, 200)
-    
+            if category and not Category.objects.filter(parent=category).exists():
+                category.delete()
+                return Response({"message": f"Category deleted successfully"}, 200)
+            return Response({"message": f"Category Cannot be deleted, other categories linked to it"}, 400)
         except Category.DoesNotExist:
-            return Response({"error": "Customer not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Category not found"}, status=status.HTTP_404_NOT_FOUND)
             
-
 class CategoryListApiView(APIView):
         
     @swagger_auto_schema(

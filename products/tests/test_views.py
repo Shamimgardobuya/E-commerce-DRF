@@ -13,7 +13,7 @@ class ProductApiTest(APITestCase):
         self.customer, create_customer = Customer.objects.get_or_create(open_id='test-user-id')
         self.category = Category.objects.create(category_name="Appliances")
         self.child_category = Category.objects.create(category_name="House Appliances",parent=self.category)
-        self.product = Product.objects.create(name="Fridge", price=200.00, category=self.category,weight=34,quantity=45, units="grams")
+        self.product, create_product = Product.objects.get_or_create(name="Fridge", price=200.00, category=self.category,weight=34,quantity=45, units="grams")
         
     def mock_auth(self, mock_authenticate, mock_decode_token, permissions):
         mock_authenticate.return_value = (self.customer, 'fake-token')
@@ -43,3 +43,21 @@ class ProductApiTest(APITestCase):
         response = self.client.get(detail_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["data"]["name"], "Fridge")
+        
+    def test_update_product(self, mock_authenticate, mock_decode_token):
+        headers = self.mock_auth(mock_authenticate, mock_decode_token,['update:products'] )
+        data = {"name": "Samsung Fridge", "price": 1200.00, "category": {"Appliances": "House Appliances"}, "quantity": 12, "weight": 5, "units": "grams"}
+        
+        url = reverse("product-detail", args=[self.product.id])
+        response = self.client.put(url, data, **headers, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_delete_product(self, mock_authenticate, mock_decode_token):
+        headers = self.mock_auth(mock_authenticate, mock_decode_token,['update:products'] )        
+        url = reverse("product-detail", args=[self.product.id])
+        response = self.client.delete(url, **headers, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        
+    def tearDown(self):
+        return super().tearDown()
+
