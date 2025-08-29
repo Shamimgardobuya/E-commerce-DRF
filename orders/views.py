@@ -11,9 +11,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
-from orders.sms_client import SendMessage
 from django.conf import settings
-from orders.email_orders import SendEmail
+from orders.tasks import send_email, send_sms
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -62,7 +61,7 @@ class OrderApiView(APIView):
         try:
             order = Order.objects.get(pk=pk)
             order.delete()
-            return Response({"message": "Order deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": "Order deleted successfully"}, status=status.HTTP_200_OK)
         except Order.DoesNotExist:
             return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -147,10 +146,8 @@ class OrderListApiView(APIView):
                     'sum_of_orders': sum_of_orders,
                 }
 
-                send_sms = SendMessage(find_user.phone_number, context, settings.SMS_SHORT_CODE)
-                send_sms.send()
-                send = SendEmail(context=context)
-                send.send_email()
+                send_sms.delay(find_user.phone_number, context, settings.SMS_SHORT_CODE)
+                send_email.delay(context=context)
                 
                 return Response({
                     "message": "Checked out orders  successfully",

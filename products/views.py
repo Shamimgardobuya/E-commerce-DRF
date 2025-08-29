@@ -12,6 +12,7 @@ from django.http import HttpResponse
 import io
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi 
+from rest_framework import status
 
 # Create your views here.
 
@@ -47,10 +48,10 @@ class ProductApiView(APIView):
                             {
                                 "message": f"Product updated successfully, {data.data}"
                             },
-                            status=201,
+                            status=status.HTTP_200_OK,
                         )
         except Exception as e:
-            return Response({"message": "Invalid Request"}, status=400)
+            return Response({"message": "Invalid Request"}, status=status.HTTP_400_BAD_REQUEST)
         
                 
     @swagger_auto_schema(
@@ -62,8 +63,8 @@ class ProductApiView(APIView):
         get_product = Product.objects.get(pk=pk)
         if get_product:
             get_product.delete()
-            return Response({"message": "Product deleted successfully "}, status=200)
-        return Response({"message": "Product not found "}, status=404)
+            return Response({"message": "Product deleted successfully "}, status=status.HTTP_200_OK)
+        return Response({"message": "Product not found "}, status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(
         operation_description="Retrieves a product",
@@ -80,7 +81,7 @@ class ProductApiView(APIView):
                 )
 
         except Product.DoesNotExist:
-            return Response({"message": "Product not found"}, status=404)
+            return Response({"message": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
             
         
 
@@ -98,12 +99,12 @@ class ProductListApiView(APIView):
             serialized_product.save()
             return Response(
                 {"message": f"Product created successfully, {serialized_product.data}"},
-                status=201,
+                status=status.HTTP_201_CREATED,
             )
         else:
             return Response(
                 {"message": f"Product not created, {serialized_product.errors}"},
-                status=400,
+                status=status.HTTP_400_BAD_REQUEST,
             )
                 
     @swagger_auto_schema(
@@ -116,11 +117,11 @@ class ProductListApiView(APIView):
             products = ProductSerializer(Product.objects.all(), many=True)
 
             return Response(
-                {"message": "Products fetched successfully", "data": products.data}, status=200
+                {"message": "Products fetched successfully", "data": products.data}, status=status.HTTP_200_OK
             )
         except Exception as e:
             return Response(
-                {"message": "Error occurred"}, status=500
+                {"message": "Error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
         

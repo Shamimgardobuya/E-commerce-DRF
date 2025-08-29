@@ -60,7 +60,8 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD=os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_BACKEND=os.getenv("EMAIL_BACKEND")
 
-
+CELERY_BROKER_URL= os.getenv("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
